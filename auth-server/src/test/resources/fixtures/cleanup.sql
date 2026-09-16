@@ -1,0 +1,10 @@
+DELETE FROM refresh_scopes;
+DELETE FROM refresh_index;
+DELETE FROM revocation;
+DELETE FROM user_roles;
+DELETE FROM role_scopes;
+DELETE FROM client_grants;
+DELETE FROM client_scopes;
+DELETE FROM users;
+DELETE FROM clients;
+DELETE FROM roles;

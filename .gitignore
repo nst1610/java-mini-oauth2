@@ -38,3 +38,8 @@ build/
 ### Mac OS ###
 .DS_Store
 /.idea
+
+# Runtime state
+data/
+logs/
+*.log
