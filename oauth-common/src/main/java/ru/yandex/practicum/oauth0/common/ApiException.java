@@ -1,5 +1,8 @@
 package ru.yandex.practicum.oauth0.common;
 
+import lombok.Getter;
+
+@Getter
 public class ApiException extends RuntimeException {
     private final int status;
     private final String error;
@@ -8,14 +11,6 @@ public class ApiException extends RuntimeException {
         super(description);
         this.status = status;
         this.error = error;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public String getError() {
-        return error;
     }
 
     public static ApiException invalidToken() {

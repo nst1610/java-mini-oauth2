@@ -12,10 +12,9 @@ public final class RequestLog {
                     "/token/refresh",
                     "/revoke",
                     "/introspect",
-                    "/config",
                     "/api/payments");
     private static final Set<String> METHODS =
-            Set.of("GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS");
+            Set.of("GET", "POST", "PUT", "DELETE");
 
     private RequestLog() {}
 

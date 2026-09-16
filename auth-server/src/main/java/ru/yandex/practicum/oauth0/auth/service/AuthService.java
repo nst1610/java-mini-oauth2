@@ -1,11 +1,11 @@
 package ru.yandex.practicum.oauth0.auth.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Clock;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,6 +39,7 @@ public class AuthService {
 
     @Transactional
     public TokenResponse token(TokenRequest request) {
+        required(request.getGrantType());
         if (!Set.of("password", "client_credentials").contains(request.getGrantType())) {
             throw new ApiException(400, "unsupported_grant_type", "Unknown grant_type");
         }
@@ -111,7 +112,7 @@ public class AuthService {
                             || !repository.getRoles(user.getId()).containsAll(claims.getRoles()))) {
                 return Map.of("active", false);
             }
-            if (!new HashSet<>(allowed(client, user)).containsAll(claims.getScopes())) {
+            if (!allowed(client, user).containsAll(claims.getScopes())) {
                 return Map.of("active", false);
             }
             Map<String, Object> result =
@@ -195,6 +196,8 @@ public class AuthService {
     }
 
     private Client authenticate(String id, String secret, String grant) {
+        required(id);
+        required(secret);
         Client client = repository.getClient(id);
         if (client == null || !PasswordUtil.matches(secret, client.getSecretHash())) {
             throw invalidCredentials();
@@ -248,9 +251,16 @@ public class AuthService {
 
     private Map<String, Object> info(String value) {
         try {
-            return objectMapper.readValue(value, new TypeReference<Map<String, Object>>() {});
-        } catch (Exception e) {
-            throw new IllegalStateException("Invalid info JSON in database");
+            if (value == null) {
+                throw new IllegalStateException("Stored info must be a JSON object");
+            }
+            Map<String, Object> result = objectMapper.readValue(value, new TypeReference<Map<String, Object>>() {});
+            if (result == null) {
+                throw new IllegalStateException("Stored info must be a JSON object");
+            }
+            return result;
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Invalid info JSON in database", e);
         }
     }
 }

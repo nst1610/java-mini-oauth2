@@ -22,12 +22,12 @@ public final class TokenCoder {
     private static final String ALGORITHM = "HS256";
 
     private final JsonMapper json = JsonMapper.builder()
-                    .enable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
-                    .enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS)
-                    .enable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS)
-                    .disable(MapperFeature.ALLOW_COERCION_OF_SCALARS)
-                    .enable(StreamReadFeature.STRICT_DUPLICATE_DETECTION)
-                    .build();
+        .enable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
+        .enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS)
+        .enable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS)
+        .disable(MapperFeature.ALLOW_COERCION_OF_SCALARS)
+        .enable(StreamReadFeature.STRICT_DUPLICATE_DETECTION)
+        .build();
     private final byte[] secret;
     private final String issuer;
     private final long skew;
@@ -120,8 +120,10 @@ public final class TokenCoder {
         if ((!accessToken && !refreshToken) || !ALGORITHM.equals(claims.getAlg())) {
             throw ApiException.invalidToken();
         }
-        if (!issuer.equals(claims.getIss()) || blank(claims.getAud())
-            || blank(claims.getSub()) || blank(claims.getClientId())) {
+        if (!issuer.equals(claims.getIss())
+                || blank(claims.getAud())
+                || blank(claims.getSub())
+                || blank(claims.getClientId())) {
             throw ApiException.invalidToken();
         }
         if (claims.getIat() <= 0 || claims.getExp() <= claims.getIat()) {

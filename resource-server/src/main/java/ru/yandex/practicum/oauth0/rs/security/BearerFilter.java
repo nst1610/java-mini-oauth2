@@ -54,15 +54,23 @@ public class BearerFilter extends OncePerRequestFilter {
             request.setAttribute("principal", claims);
         } catch (ApiException e) {
             RequestLog.failure(request, e);
-            response.setStatus(e.getStatus());
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            if (e.getStatus() == 401 || e.getStatus() == 403) {
-                response.setHeader("WWW-Authenticate", "Bearer error=\"" + e.getError() + "\"");
-            }
-            json.writeValue(response.getOutputStream(), ApiErrors.body(e));
+            writeError(response, e);
+            return;
+        } catch (RuntimeException e) {
+            RequestLog.unexpected(request, e);
+            writeError(response, new ApiException(500, "server_error", "Internal server error"));
             return;
         }
         chain.doFilter(request, response);
+    }
+
+    private void writeError(HttpServletResponse response, ApiException e) throws IOException {
+        response.setStatus(e.getStatus());
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        if (e.getStatus() == 401 || e.getStatus() == 403) {
+            response.setHeader("WWW-Authenticate", "Bearer error=\"" + e.getError() + "\"");
+        }
+        json.writeValue(response.getOutputStream(), ApiErrors.body(e));
     }
 }

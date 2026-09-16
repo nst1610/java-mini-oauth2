@@ -5,6 +5,7 @@ import java.util.Map;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientException;
 import ru.yandex.practicum.oauth0.common.ApiException;
 import ru.yandex.practicum.oauth0.rs.config.ResourceProperties;
 
@@ -30,10 +31,10 @@ public class IntrospectionClient {
                 .retrieve()
                 .body(JsonNode.class);
             if (response == null || !response.path("active").isBoolean()) {
-                throw new IllegalStateException();
+                throw new ApiException(503, "auth_unavailable", "Invalid response from authorization server");
             }
             return response.path("active").booleanValue();
-        } catch (Exception e) {
+        } catch (RestClientException e) {
             throw new ApiException(503, "auth_unavailable", "Authorization server is unavailable");
         }
     }
