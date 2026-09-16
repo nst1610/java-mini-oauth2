@@ -1,11 +1,8 @@
 package ru.yandex.practicum.oauth0.auth;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.Test;
-
 import ru.yandex.practicum.oauth0.auth.util.PasswordUtil;
 
 class PasswordUtilTest {
